@@ -263,9 +263,9 @@ int main(void)
 
 
 
- * 8. Tokenize string
+//8. Tokenize string
 /**Strtok: extracts tokesns from strings
- *char *strtok(char *str, const chat *delim)
+ * char *strtok(char *str, const chat *delim)
  * getline reads the whole sentence cmd...
 */
 
@@ -305,4 +305,96 @@ int main (void)
 
 
 
+//2. Command Line Arguments (argc and(&&) argv)
+/** these are the arguments passed from tne command line to the C program when they are executed
+ *
+ * #argc
+ * stores number of command line arguments passed by the user including the name of the program
+ *
+ * #argv: argument vectors
+ * this is a NULL terminated array of strings (character pointers) used to store the entire list of comman * d line arguments
+ */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main (int argc, char *argc[])
+{
+	//argv => char *argv[] = {"./cmd_line_args", "coding", "is", "fun", NULL);
+	printf ("argc: %d\n", argv);
+
+	for (int i =0; argv[i] != NULL; i++)
+		printf("argv[%d]; %s\n", 1, argv[1]);
+
+	return 0;
+}
+
+
+/** Understand what is a shell
+ * Shell is REPL (Read Evaluate Print Loop)
+ */
+
+//Create custom command line args
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+int main (void)
+{
+        char *cmd = NULL, *cmd_cpy = NULL, *token = NULL;
+        char *delim = " \n";
+        size_t n = 0;
+        int argc = 0, i = 0;
+        char **argv = NULL;
+
+        printf("$ ");
+
+        if (getline(&cmd, &n, stdin) == -1)
+                return -1;
+
+        //need a copy of a string if we use strtok because this one alters the string beyond repair
+        cmd_cpy = strdup(cmd);
+
+        /**while (cmd[i])
+        {
+                if (cmd[i] == '\n')
+                        printf("\\n ---> Input has %ld characters", strlen(cmd));
+                else
+                        printf("%c", cmd[i]);
+                i++;
+        }
+        */
+
+        token = strtok (cmd, delim);
+ 
+	while (token)
+        {
+                token = strtok(NULL, delim);
+                argc++;
+        }
+
+        printf("%d\n", argc);
+
+        argv = malloc(sizeof(char *) *argc);
+
+        token = strtok(cmd_cpy, delim);
+
+        while (token)
+        {
+                argv[i] = token;
+                token = strtok(NULL, delim);
+                i++;
+        }
+        argv[i] = NULL;
+
+        i = 0;
+
+        while (argv[i])
+                printf("%s\n", argv[i++]);
+
+        free(cmd), free(cmd_cpy), free(argv);
+
+        return 0;
+}
